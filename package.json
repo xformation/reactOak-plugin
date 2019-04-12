@@ -1,0 +1,42 @@
+{
+  "name": "reactoak",
+  "version": "1.0.0",
+  "description": "Sample project to show graphql oak service integration in reactjs",
+  "main": "index.js",
+  "scripts": {
+    "start": "node start",
+    "build": "node build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://sharmanju@github.com/xformation/reactOak-plugin.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xformation/reactOak-plugin/issues"
+  },
+  "homepage": "https://github.com/xformation/reactOak-plugin#readme",
+  "keywords": [
+    "Reactjs",
+    "Oak",
+    "GraphQL"
+  ],
+  "author": "Rajesh",
+  "license": "Apache",
+  "lint-staged": {
+    "*.{js,json,css,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  },
+  "prettier": {
+    "useTabs": true,
+    "printWidth": 90,
+    "bracketSpacing": true,
+    "semi": true
+  },
+  "dependencies": {
+    "apollo-boost": "^0.3.1",
+    "graphql": "^14.2.1",
+    "react-apollo": "^2.5.4"
+  }
+}
