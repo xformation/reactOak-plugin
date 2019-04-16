@@ -1,37 +1,43 @@
 {
-	"name": "reactoak",
-	"version": "1.0.0",
-	"private": true,
-	"scripts": {
-		"precommit": "lint-staged",
-		"start": "react-scripts start",
-		"build": "react-scripts build",
-		"test": "react-scripts test",
-		"eject": "react-scripts eject"
-	},
-	"eslintConfig": {
-		"extends": "react-app"
-	},
-	"browserslist": [
-		">0.2%",
-		"not dead",
-		"not ie <= 11",
-		"not op_mini all"
-	],
-	"devDependencies": {
-		"eslint-config-react-app": "^3.0.8",
-		"eslint": "^5.16.0",
-		"eslint-plugin-react": "^7.12.4",
-		"prettier": "1.17.0"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "pretty-quick --staged"
-		}
-	},
-	"dependencies": {
-		"react": "^16.8.6",
-		"react-dom": "^16.8.6",
-		"react-scripts": "2.1.8"
-	}
+    "name": "reactoak",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "precommit": "lint-staged",
+        "start": "react-scripts start",
+        "build": "react-scripts build",
+        "test": "react-scripts test",
+        "eject": "react-scripts eject"
+    },
+    "eslintConfig": {
+        "extends": "react-app"
+    },
+    "lint-staged": {
+        "src/**/*.{js,jsx,json,css}": [
+            "prettier --single-quote --write",
+            "git add"
+        ]
+    },
+    "browserslist": [
+        ">0.2%",
+        "not dead",
+        "not ie <= 11",
+        "not op_mini all"
+    ],
+    "devDependencies": {
+        "eslint-config-react-app": "^3.0.8",
+        "eslint": "^5.16.0",
+        "eslint-plugin-react": "^7.12.4",
+        "prettier": "1.17.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "pretty-quick --staged"
+        }
+    },
+    "dependencies": {
+        "react": "^16.8.6",
+        "react-dom": "^16.8.6",
+        "react-scripts": "2.1.8"
+    }
 }
