@@ -14,28 +14,28 @@ const uploadsQuery = gql`
 `;
 
 const UploadFile = ({ mutate }) => {
-  const handleChange = ({
-    target: {
-      validity,
-      files: [file]
-    }
-  }) =>
-    validity.valid &&
-    mutate({
-      variables: { file },
-      update(
-        proxy,
-        {
-          data: { singleUpload }
+    const handleChange = ({
+        target: {
+            validity,
+            files: [file]
         }
-      ) {
-        const data = proxy.readQuery({ query: uploadsQuery });
-        data.uploads.push(singleUpload);
-        proxy.writeQuery({ query: uploadsQuery, data });
-      }
-    });
+    }) =>
+        validity.valid &&
+        mutate({
+            variables: { file },
+            update(
+                proxy,
+                {
+                    data: { singleUpload }
+                }
+            ) {
+                const data = proxy.readQuery({ query: uploadsQuery });
+                data.uploads.push(singleUpload);
+                proxy.writeQuery({ query: uploadsQuery, data });
+            }
+        });
 
-  return <input type="file" required onChange={handleChange} />;
+    return <input type="file" required onChange={handleChange} />;
 };
 
 export default graphql(gql`
