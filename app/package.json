@@ -1,0 +1,39 @@
+{
+    "name": "apollo-upload-app",
+    "private": true,
+    "engines": {
+        "node": ">=8.6"
+    },
+    "browserslist": "> 0.5%, not dead, node 8.6",
+    "dependencies": {
+        "@zeit/next-bundle-analyzer": "^0.1.2",
+        "apollo-cache-inmemory": "^1.5.1",
+        "apollo-client": "^2.5.1",
+        "apollo-link": "^1.2.11",
+        "apollo-upload-client": "^10.0.0",
+        "babel-plugin-graphql-tag": "^2.1.0",
+        "babel-plugin-transform-inline-environment-variables": "^0.4.3",
+        "cross-fetch": "^3.0.2",
+        "dotenv-cli": "^2.0.0",
+        "graphql": "^14.2.1",
+        "graphql-tag": "^2.10.1",
+        "next": "^7.0.3",
+        "react": "^16.8.6",
+        "react-apollo": "^2.5.4",
+        "react-dom": "^16.8.6"
+    },
+    "scripts": {
+        "dev": "dotenv next",
+        "build": "dotenv next build",
+        "start": "dotenv next start"
+    },
+    "babel": {
+        "presets": [
+            "next/babel"
+        ],
+        "plugins": [
+            "transform-inline-environment-variables",
+            "graphql-tag"
+        ]
+    }
+}
