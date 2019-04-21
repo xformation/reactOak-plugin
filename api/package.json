@@ -14,6 +14,9 @@
         "promises-all": "^1.0.0",
         "shortid": "^2.2.14"
     },
+    "devDependencies": {
+        "nodemon": "^1.18.11"
+    },
     "scripts": {
         "dev": "nodemon -i db.json",
         "start": "node --experimental-modules -r dotenv/config server"
