@@ -9,7 +9,7 @@ An example GraphQL API using:
 
 ## Setup
 
-1.  Change current director to api.
+1.  Change current directory to api.
 2.  Duplicate `.env.example` as `.env` and configure.
 3.  Run `npm install` in the `api` directory with Terminal.
 4.  Run `npm run dev` for development.
@@ -25,8 +25,9 @@ An example SSR web app using:
 
 ## Setup
 
-1.  Change current director to app.
+1.  Change current directory to app.
 2.  Duplicate `.env.example` as `.env` and configure.
 3.  Run `npm install` in the `app` directory with Terminal.
 4.  Run `npm run dev` for development.
 5.  Run `npm run build && npm start` for production.
+6.  Open browser with http://localhost:3000
