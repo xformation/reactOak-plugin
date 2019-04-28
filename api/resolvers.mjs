@@ -54,7 +54,7 @@ const uploadFileOnOak = (path, nodePath) => {
         formData.pipe(concat({ encoding: 'buffer' }, async data => {
             let suc = false;
             try {
-                const res = await axios.post('http://localhost:8093/oakRepo/upload', data, {
+                const res = await axios.post(process.env.OAK_SERVER + '/oakRepo/upload', data, {
                     headers: formData.getHeaders()
                 });
                 if (res && res.data) {
@@ -89,7 +89,7 @@ const createFileNodeInOak = (nodePath, filename, mimetype, upPath) => {
             nodeName: filename
         };
         console.log("Sending: ", params);
-        axios.post('http://localhost:8093/oakRepo/createNode', qs.stringify(params))
+        axios.post(process.env.OAK_SERVER + '/oakRepo/createNode', qs.stringify(params))
             .then((response) => {
                 console.log("Upload: ", response.data);
                 resolve(response.data);
@@ -119,7 +119,7 @@ const processUpload = async upload => {
     const { id, path } = await storeFS({ stream, filename });
     await waitFor(1000);
     // ADD logic to upload file on oak-server
-    const nodePath = "/synectiks/cms/" + id.replace(/[\W_]/g, '');
+    const nodePath = process.env.NODEPATH + id.replace(/[\W_]/g, '');
     const upPath = await uploadFileOnOak(path, nodePath);
     await createFileNodeInOak(nodePath, filename, mimetype, upPath);
     return storeDB({ id, filename, mimetype, path, nodePath });
