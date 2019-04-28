@@ -6,6 +6,11 @@ import mkdirp from 'mkdirp';
 import promisesAll from 'promises-all';
 import shortid from 'shortid';
 
+import axios from 'axios';
+import FormData from 'form-data';
+import concat from 'concat-stream';
+import qs from "qs";
+
 const UPLOAD_DIR = './uploads';
 const db = lowdb(new FileSync('db.json'));
 
@@ -31,7 +36,7 @@ const storeFS = ({ stream, filename }) => {
             .on('error', error => reject(error))
             .on('finish', () => resolve({ id, path }))
     );
-}
+};
 
 const storeDB = file =>
     db
@@ -40,12 +45,85 @@ const storeDB = file =>
         .last()
         .write();
 
+const uploadFileOnOak = (path, nodePath) => {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('upPath', nodePath);
+        formData.append('file', fs.createReadStream(path));
+        console.log("Sending: multipart request");
+        formData.pipe(concat({ encoding: 'buffer' }, async data => {
+            let suc = false;
+            try {
+                const res = await axios.post('http://localhost:8093/oakRepo/upload', data, {
+                    headers: formData.getHeaders()
+                });
+                if (res && res.data) {
+                    console.log("Upload Res: ", res.data);
+                    resolve(res.data);
+                    suc = true;
+                }
+            } catch (err) {
+                console.log("Upload Err: ", err);
+                reject(err);
+                suc = true;
+            } finally {
+                if (!suc) {
+                    reject(new Error('Unexpected error occured.'));
+                }
+            }
+        }));
+    });
+};
+
+const createFileNodeInOak = (nodePath, filename, mimetype, upPath) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            parentPath: nodePath,
+            json: JSON.stringify({
+                jcrPath: nodePath,
+                name: filename,
+                contentType: mimetype,
+                path: upPath
+            }),
+            cls: 'com.synectiks.commons.entities.oak.OakFileNode',
+            nodeName: filename
+        };
+        console.log("Sending: ", params);
+        axios.post('http://localhost:8093/oakRepo/createNode', qs.stringify(params))
+            .then((response) => {
+                console.log("Upload: ", response.data);
+                resolve(response.data);
+            }).catch(function (error) {
+                console.log("Create Err: ", error);
+                reject(error);
+            });
+    });
+};
+
+const waitFor = (delay) => {
+    return new Promise((resolve, reject) => {
+        const res = 'Success';
+        try {
+            setTimeout(() => {
+                resolve(res);
+            }, delay);
+        } catch (err) {
+            reject(err);
+        }
+    });
+};
+
 const processUpload = async upload => {
     const { createReadStream, filename, mimetype } = await upload;
     const stream = createReadStream();
     const { id, path } = await storeFS({ stream, filename });
-    return storeDB({ id, filename, mimetype, path });
-}
+    await waitFor(1000);
+    // ADD logic to upload file on oak-server
+    const nodePath = "/synectiks/cms/" + id.replace(/[\W_]/g, '');
+    const upPath = await uploadFileOnOak(path, nodePath);
+    await createFileNodeInOak(nodePath, filename, mimetype, upPath);
+    return storeDB({ id, filename, mimetype, path, nodePath });
+};
 
 export default {
     Upload: apolloServerKoa.GraphQLUpload,
@@ -69,4 +147,4 @@ export default {
             return resolve;
         }
     }
-}
+};
