@@ -7,6 +7,7 @@ export default gql`
       filename
       mimetype
       path
+      nodePath
     }
   }
 `;
