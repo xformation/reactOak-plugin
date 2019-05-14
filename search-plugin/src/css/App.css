@@ -1,0 +1,43 @@
+#root {
+	padding: 5px 50px 5px 5px;
+}
+.App {
+	text-align: center;
+}
+
+.App input {
+	margin: 5px 50px 5px 10px;
+}
+
+.whiteBG {
+	background: #FFF;
+}
+
+.loadingBG {
+	background: #FFF url(/images/loaderIcon.gif) no-repeat right center;
+}
+
+.suggesstions {
+	float: left;
+	list-style: none;
+	margin-top: -3px;
+	padding: 0;
+	position: absolute;
+}
+
+.suggesstions li {
+	padding: 10px;
+	background: #f0f0f0;
+	border-bottom: #bbb9b9 1px solid;
+}
+
+.suggesstions li:hover {
+	background: #ece3d2;
+	cursor: pointer;
+}
+.hideSuggesstionBox {
+	display: none;
+}
+.showSuggesstionBox {
+	display: block;
+}
