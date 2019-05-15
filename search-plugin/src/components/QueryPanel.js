@@ -109,10 +109,10 @@ export default class QueryPanel extends React.Component {
 
 	setSuggestions(data) {
 		if (data && Array.isArray(data)) {
-			var html = "<ul className='suggesstions'>";
+			var html = "<ul class='suggesstions'>";
 			for (var i = 0; i < data.length; i++) {
 				var key = data[i];
-				html += "<li onclick={this.selectSuggestion(this.key)}>" + key + "</li>";
+				html += "<li onclick=\"" + this.selectSuggestion(key) + "\">" + key + "</li>";
 			}
 			html += "</ul>";
 			this.setState({
@@ -142,7 +142,7 @@ export default class QueryPanel extends React.Component {
 					<input type="text" id={`${id}query`} defaultValue={this.state.qry}
 						onKeyUp={this.suggestions} className={ this.state.styleBg }
 						style={{ width: '100%' }} placeholder="Enter your query string..." />
-					<div className="suggesstionBox">{this.state.suggestns}</div>
+					<div className="suggesstionBox" dangerouslySetInnerHTML={{__html: this.state.suggestns}}></div>
 				</div>
 				<div style={{textAlign: "center"}}>
 					<input id="submit" type="button" value="Translate"
