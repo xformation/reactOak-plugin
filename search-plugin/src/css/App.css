@@ -17,7 +17,15 @@
 	background: #FFF url(/images/loaderIcon.gif) no-repeat right center;
 }
 
+.suggesstionBox {
+	margin: 5px;
+	z-index: 1;
+}
+
 .suggesstions {
+	text-align: left;
+	max-height: 150px;
+	overflow-y: auto;
 	float: left;
 	list-style: none;
 	margin-top: -3px;
@@ -37,7 +45,9 @@
 }
 .hideSuggesstionBox {
 	display: none;
+	z-index: 1;
 }
 .showSuggesstionBox {
 	display: block;
+	z-index: 1;
 }
