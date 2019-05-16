@@ -12,6 +12,7 @@ export default class QueryPanel extends React.Component {
 			styleBg: 'whiteBG',
 			styleSug: 'hideSuggesstionBox',
 		};
+		this.qryChange = this.qryChange.bind(this);
 		this.translate = this.translate.bind(this);
 		this.suggestions = this.suggestions.bind(this);
 		this.getQuery = this.getQuery.bind(this);
@@ -20,18 +21,21 @@ export default class QueryPanel extends React.Component {
 		this.selectSuggestion = this.selectSuggestion.bind(this);
 	}
 
-	suggestions(event) {
-		const keyValue = event.key;
-		console.log("pressed: ", keyValue);
-		this.setState(({ qry }) => ({
-				qry: qry + keyValue
-			}));
-		var val = this.getQuery(this.state.qry);
-		if (val && (val === "" || val.length < 2)) {
-			return;
-		}
+	qryChange(e) {
+		const key = e.target.value;
 		this.setState({
-			styleBg: 'loadingBG'
+			qry: key
+		});
+		if (key.length > 2 ) {
+			this.suggestions();
+		}
+	}
+
+	suggestions() {
+		var val = this.getQuery(this.state.qry);
+		this.setState({
+			styleBg: 'loadingBG',
+			elsQry: "Searching ..."
 		});
 		console.log(process.env);
 		this.postReq(process.env.REACT_APP_POLICY_RUNNER + '/suggestKey', "query=" + val,
@@ -42,9 +46,9 @@ export default class QueryPanel extends React.Component {
 	}
 
 	translate() {
-		this.postReq(process.env.REACT_APP_POLICY_RUNNER + '/translate', JSON.stringify({
+		this.postReq(process.env.REACT_APP_POLICY_RUNNER + '/translate', {
 				"query": this.state.qry
-			}), (response) => {
+			}, (response) => {
 				var pretty = JSON.stringify(response.data, undefined, 4);
 				console.log("Res: ", pretty);
 				this.setState({
@@ -112,25 +116,33 @@ export default class QueryPanel extends React.Component {
 			var html = "<ul class='suggesstions'>";
 			for (var i = 0; i < data.length; i++) {
 				var key = data[i];
-				html += "<li onclick=\"" + this.selectSuggestion(key) + "\">" + key + "</li>";
+				html += "<li id='" + key + "'>" + key + "</li>";
 			}
 			html += "</ul>";
 			this.setState({
 				suggestns: html,
 				styleBg: 'whiteBG',
-				styleSug: 'showSuggesstionBox'
+				styleSug: 'showSuggesstionBox',
+				elsQry: "Searching has found " + data.length + " records"
 			});
 		}
 	}
 
-	selectSuggestion(val) {
-		var prev = this.state.qry;
-		var res = this.getQuery(prev);
-		var sel = prev.replace(new RegExp(res + '$'), val);
-		this.setState({
-			qry: sel,
-			styleBg: 'whiteBG'
-		});
+	selectSuggestion(e) {
+		if(e.target.tagName === 'LI') {
+			const val = e.target.id;
+			var prev = this.state.qry;
+			var res = this.getQuery(prev);
+			var sel = prev.replace(new RegExp(res + '$'), val);
+			this.setState({
+				qry: sel,
+				suggestns: '',
+				styleBg: 'whiteBG',
+				styleSug: 'hideSuggesstionBox',
+				elsQry: "You have selected: " + val
+			});
+		}
+		e.preventDefault();
 	}
 
 	render() {
@@ -139,17 +151,19 @@ export default class QueryPanel extends React.Component {
 			<div>
 				<div>
 					<label htmlFor={`${id}query`}>Query:</label>
-					<input type="text" id={`${id}query`} defaultValue={this.state.qry}
-						onKeyUp={this.suggestions} className={ this.state.styleBg }
+					<input type="text" id={`${id}query`} value={this.state.qry}
+						onChange={ this.qryChange } className={ this.state.styleBg }
 						style={{ width: '100%' }} placeholder="Enter your query string..." />
-					<div className="suggesstionBox" dangerouslySetInnerHTML={{__html: this.state.suggestns}}></div>
+					<div onClick={ this.selectSuggestion } className="suggesstionBox"
+						dangerouslySetInnerHTML={{__html: this.state.suggestns}}></div>
 				</div>
 				<div style={{textAlign: "center"}}>
 					<input id="submit" type="button" value="Translate"
 						onClick={this.translate} />
+					<br/>
 					<label>{this.state.elsQry}</label>
 				</div>
-			</div >
+			</div>
 		);
 	}
 }
