@@ -1,6 +1,18 @@
 import React from 'react';
 import axios from 'axios';
-import './../css/App.css';
+import './QueryPanel.css';
+
+const originHdr = {
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+	'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS'
+};
+const originCntHdr = {
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+	'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
+	'Content-Type': 'application/x-www-form-urlencoded'
+};
 
 export default class QueryPanel extends React.Component {
 	constructor(props) {
@@ -17,6 +29,7 @@ export default class QueryPanel extends React.Component {
 		this.suggestions = this.suggestions.bind(this);
 		this.getQuery = this.getQuery.bind(this);
 		this.postReq = this.postReq.bind(this);
+		this.execute = this.execute.bind(this);
 		this.setSuggestions = this.setSuggestions.bind(this);
 		this.selectSuggestion = this.selectSuggestion.bind(this);
 	}
@@ -33,13 +46,16 @@ export default class QueryPanel extends React.Component {
 
 	suggestions() {
 		var val = this.getQuery(this.state.qry);
+		if (val.length > 2 ) {
+			return;
+		}
 		this.setState({
 			styleBg: 'loadingBG',
 			elsQry: "Searching ..."
 		});
 		console.log(process.env);
 		this.postReq(process.env.REACT_APP_POLICY_RUNNER + '/suggestKey', "query=" + val,
-			(response) => {
+			originHdr,(response) => {
 				console.log("Res: ", response.data);
 				this.setSuggestions(response.data);
 			});
@@ -48,16 +64,34 @@ export default class QueryPanel extends React.Component {
 	translate() {
 		this.postReq(process.env.REACT_APP_POLICY_RUNNER + '/translate', {
 				"query": this.state.qry
-			}, (response) => {
+			}, originHdr, (response) => {
 				var pretty = JSON.stringify(response.data, undefined, 4);
 				console.log("Res: ", pretty);
 				this.setState({
 					elsQry: pretty
 				});
+				setTimeout(() => {
+					this.execute(response.data);
+				}, 1000);
 			});
 	}
 
-	postReq(url, data, callback) {
+	execute(query) {
+		const params = "query=" + JSON.stringify(query.query)
+			+ "&cls=com.synectiks.commons.entities.SourceEntity"
+			+ "&pageNo=1&pageSize=10";
+		this.postReq(process.env.REACT_APP_SEARCH_URL + '/search/elsQuery',
+			params
+		, originCntHdr, (response) => {
+			var pretty = JSON.stringify(response.data, undefined, 4);
+			console.log("Res: ", pretty);
+			this.setState({
+				elsQry: pretty
+			});
+		});
+	}
+
+	postReq(url, data, hdr, callback) {
 		axios.post(
 			url,
 			data
@@ -65,6 +99,9 @@ export default class QueryPanel extends React.Component {
 			callback(response);
 		}).catch((error) => {
 			console.log("Create Err: ", error);
+			this.setState({
+				elsQry: 'Request Failed with ' + error
+			});
 		});
 	}
 
@@ -113,7 +150,7 @@ export default class QueryPanel extends React.Component {
 
 	setSuggestions(data) {
 		if (data && Array.isArray(data)) {
-			var html = "<ul class='suggesstions'>";
+			var html = "<ul class='suggesstions maxHeight'>";
 			for (var i = 0; i < data.length; i++) {
 				var key = data[i];
 				html += "<li id='" + key + "'>" + key + "</li>";
@@ -161,7 +198,7 @@ export default class QueryPanel extends React.Component {
 					<input id="submit" type="button" value="Translate"
 						onClick={this.translate} />
 					<br/>
-					<label>{this.state.elsQry}</label>
+					<pre className='maxHeight'>{this.state.elsQry}</pre>
 				</div>
 			</div>
 		);
