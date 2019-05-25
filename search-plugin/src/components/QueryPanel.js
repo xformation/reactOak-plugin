@@ -1,37 +1,29 @@
 import React from 'react';
-import axios from 'axios';
+import Utils from './../utils/Utils';
 import './QueryPanel.css';
-
-const originHdr = {
-	'Access-Control-Allow-Origin': '*',
-	'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-	'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS'
-};
-const originCntHdr = {
-	'Access-Control-Allow-Origin': '*',
-	'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
-	'Access-Control-Allow-Methods': 'GET, PUT, POST, DELETE, OPTIONS',
-	'Content-Type': 'application/x-www-form-urlencoded'
-};
 
 export default class QueryPanel extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			qry: '',
+			resTbl: '',
 			elsQry: '',
 			suggestns: '',
 			styleBg: 'whiteBG',
 			styleSug: 'hideSuggesstionBox',
 		};
+		//this.postReq = this.postReq.bind(this);
+		this.execute = this.execute.bind(this);
+		//this.getQuery = this.getQuery.bind(this);
 		this.qryChange = this.qryChange.bind(this);
 		this.translate = this.translate.bind(this);
 		this.suggestions = this.suggestions.bind(this);
-		this.getQuery = this.getQuery.bind(this);
-		this.postReq = this.postReq.bind(this);
-		this.execute = this.execute.bind(this);
+		//this.getResultTable = this.getResultTable.bind(this);
 		this.setSuggestions = this.setSuggestions.bind(this);
 		this.selectSuggestion = this.selectSuggestion.bind(this);
+		//this.extractEntityArray = this.extractEntityArray.bind(this);
+		//this.extractEntityWithKeys = this.extractEntityWithKeys.bind(this);
 	}
 
 	qryChange(e) {
@@ -45,7 +37,7 @@ export default class QueryPanel extends React.Component {
 	}
 
 	suggestions() {
-		var val = this.getQuery(this.state.qry);
+		var val = Utils.getQuery(this.state.qry);
 		if (val.length > 2 ) {
 			return;
 		}
@@ -54,25 +46,39 @@ export default class QueryPanel extends React.Component {
 			elsQry: "Searching ..."
 		});
 		console.log(process.env);
-		this.postReq(process.env.REACT_APP_POLICY_RUNNER + '/suggestKey', "query=" + val,
-			originHdr,(response) => {
-				console.log("Res: ", response.data);
-				this.setSuggestions(response.data);
+		Utils.postReq(process.env.REACT_APP_POLICY_RUNNER + '/suggestKey', "query=" + val,
+			(response, err) => {
+				if (err) {
+					this.setState({
+						elsQry: 'Request Failed with ' + err
+					});
+					return;
+				} else {
+					console.log("Res: ", response.data);
+					this.setSuggestions(response.data);
+				}
 			});
 	}
 
 	translate() {
-		this.postReq(process.env.REACT_APP_POLICY_RUNNER + '/translate', {
+		Utils.postReq(process.env.REACT_APP_POLICY_RUNNER + '/translate', {
 				"query": this.state.qry
-			}, originHdr, (response) => {
-				var pretty = JSON.stringify(response.data, undefined, 4);
-				console.log("Res: ", pretty);
-				this.setState({
-					elsQry: pretty
-				});
-				setTimeout(() => {
-					this.execute(response.data);
-				}, 1000);
+			}, (response, err) => {
+				if (err) {
+					this.setState({
+						elsQry: 'Request Failed with ' + err
+					});
+					return;
+				} else {
+					var pretty = JSON.stringify(response.data, undefined, 4);
+					console.log("Res: ", pretty);
+					this.setState({
+						elsQry: pretty
+					});
+					setTimeout(() => {
+						this.execute(response.data);
+					}, 1000);
+				}
 			});
 	}
 
@@ -80,82 +86,34 @@ export default class QueryPanel extends React.Component {
 		const params = "query=" + JSON.stringify(query.query)
 			+ "&cls=com.synectiks.commons.entities.SourceEntity"
 			+ "&pageNo=1&pageSize=10&notOnlyIds=true";
-		this.postReq(process.env.REACT_APP_SEARCH_URL + '/search/elsQuery',
-			params
-		, originCntHdr, (response) => {
-			var pretty = JSON.stringify(response.data, undefined, 4);
-			console.log("Res: ", pretty);
-			this.setState({
-				elsQry: pretty
-			});
-		});
-	}
-
-	postReq(url, data, hdr, callback) {
-		axios.post(
-			url,
-			data
-		).then((response) => {
-			callback(response);
-		}).catch((error) => {
-			console.log("Create Err: ", error);
-			this.setState({
-				elsQry: 'Request Failed with ' + error
-			});
-		});
-	}
-
-	getQuery(val) {
-		var res = val.trim();
-		if (val && val.length > 0) {
-			var arr = val.split(" ");
-			if (arr) {
-				var len = arr.length;
-				if (len > 1) {
-					var cur = arr[len - 1];
-					var prev = arr[len - 2].toLowerCase();
-					if (prev && prev.indexOf(",") === (prev.length - 1)) {
-						for (var i = len - 2; i >= 0; i--) {
-							var pVal = arr[i];
-							if (pVal && pVal.indexOf("[") == 0) {
-								res = cur;
-								break;
-							} else if (pVal.indexOf(",") === (pVal.length - 1)) {
-								continue;
-							} else {
-								break;
-							}
-						}
-					} else {
-						switch (prev) {
-							case 'has':
-							case 'and':
-							case 'or':
-							case '[':
-								res = cur;
-								break;
-							default:
-								res = "";
-						}
+			Utils.postReq(process.env.REACT_APP_SEARCH_URL + '/search/elsQuery',
+			params, (response, err) => {
+				if (err) {
+					this.setState({
+						elsQry: 'Request Failed with ' + err
+					});
+					return;
+				} else {
+					var pretty = JSON.stringify(response.data, undefined, 4);
+					console.log("Res: ", pretty);
+					var rec = 0;
+					var resTable = '';
+					if (response.data && response.data.hits) {
+						rec = response.data.hits.total;
 					}
+					resTable = Utils.getResultTable(rec, response.data);
+					this.setState({
+						elsQry: "Found " + rec + " matches.",
+						resTbl: resTable
+					});
 				}
 			}
-		}
-		if (res && res !== "" &&
-			(res.indexOf("[") == 0 || res.indexOf("(") == 0)) {
-			res = res.substring(1);
-		}
-		return res;
+		);
 	}
 
 	setSuggestions(data) {
 		if (data && Array.isArray(data)) {
-			var html = "<ul class='suggesstions maxHeight'>";
-			for (var i = 0; i < data.length; i++) {
-				var key = data[i];
-				html += "<li id='" + key + "'>" + key + "</li>";
-			}
-			html += "</ul>";
+			var html = Utils.getSuggestionList(data);
 			this.setState({
 				suggestns: html,
 				styleBg: 'whiteBG',
@@ -169,7 +127,7 @@ export default class QueryPanel extends React.Component {
 		if(e.target.tagName === 'LI') {
 			const val = e.target.id;
 			var prev = this.state.qry;
-			var res = this.getQuery(prev);
+			var res = Utils.getQuery(prev);
 			var sel = prev.replace(new RegExp(res + '$'), val);
 			this.setState({
 				qry: sel,
@@ -200,6 +158,7 @@ export default class QueryPanel extends React.Component {
 					<br/>
 					<pre className='maxHeight'>{this.state.elsQry}</pre>
 				</div>
+				<div dangerouslySetInnerHTML={{__html: this.state.resTbl}}></div>
 			</div>
 		);
 	}
