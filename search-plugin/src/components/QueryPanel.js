@@ -2,6 +2,12 @@ import React from 'react';
 import Utils from './../utils/Utils';
 import './QueryPanel.css';
 
+/**
+ * Query panel class to add autocomplete and english translation.
+ * If you need translation button and response table visible set
+ * isTranslation="true".
+ * You can set id="xyz" if you would like to add multiple components in same page.
+ */
 export default class QueryPanel extends React.Component {
 	constructor(props) {
 		super(props);
@@ -152,13 +158,14 @@ export default class QueryPanel extends React.Component {
 					<div onClick={ this.selectSuggestion } className="suggesstionBox"
 						dangerouslySetInnerHTML={{__html: this.state.suggestns}}></div>
 				</div>
+				{this.props.isTranslate &&
 				<div style={{textAlign: "center"}}>
 					<input id="submit" type="button" value="Translate"
 						onClick={this.translate} />
 					<br/>
 					<pre className='maxHeight'>{this.state.elsQry}</pre>
-				</div>
-				<div dangerouslySetInnerHTML={{__html: this.state.resTbl}}></div>
+					<div dangerouslySetInnerHTML={{__html: this.state.resTbl}}></div>
+				</div>}
 			</div>
 		);
 	}

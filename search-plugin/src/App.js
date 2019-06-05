@@ -6,7 +6,7 @@ function App() {
 	return (
 		<div className="App">
 			<label>React query component</label>
-			<QueryPanel id="qp1"/>
+			<QueryPanel id="qp1" isTranslate="true"/>
 		</div>
 	);
 }
