@@ -5,7 +5,9 @@ import Tabs from './components/tabs/Tabs.js';
 import Sample from './views/sample/Sample.js';
 import SurveyCreator from './views/sample/SurveyCreator.js';
 import Rules from './views/rules/Rules.js';
-import QueryPanel from '@synectiks/oak/search-plugin';
+import Policy from './views/Policy.js';
+import Executor from './views/Executor.js';
+import QueryPanel from './components/query/QueryPanel.js';
 
 class App extends React.Component {
 	render() {
@@ -15,16 +17,16 @@ class App extends React.Component {
 					<h1>Policy Runner</h1>
 					<Tabs>
 						<div label="Translator">
-							<QueryPanel id="trans"/>
+							<QueryPanel id="trans" isTranslate="true"/>
 						</div>
 						<div label="Create Rule">
 							<Rules/>
 						</div>
 						<div label="Create Policy">
-							After 'while, <em>Create Policy</em>!
+							<Policy/>
 						</div>
 						<div label="Execute Policy">
-							Nothing to see here, this tab is <em>Execute Policy</em>!
+							<Executor/>
 						</div>
 						<div label="SurveyJs-Sample">	
 							<Sample />
