@@ -85,7 +85,7 @@ export default class QueryPanel extends React.Component {
 	}
 
 	execute(query) {
-		const params = "query=" + JSON.stringify(query.query)
+		const params = "query=" + JSON.stringify(query)
 			+ "&cls=com.synectiks.commons.entities.SourceEntity"
 			+ "&pageNo=1&pageSize=10&notOnlyIds=true";
 			Utils.postReq(process.env.REACT_APP_SEARCH_URL + '/search/elsQuery',

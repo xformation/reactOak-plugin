@@ -9,6 +9,7 @@ export default class Executor extends ViewBase {
 
 		this.state = {
 			res: '',
+			resTbl: '',
 			isLoading: true
 		};
 		this.setData = this.setData.bind(this);
@@ -54,7 +55,8 @@ export default class Executor extends ViewBase {
 	onComplete(result) {
 		console.log("Execute Policy: ", result.data);
 		const val = result.data.policy;
-		Utils.postReq(process.env.REACT_APP_POLICY_RUNNER + '/execute', "policyId=" + val,
+		Utils.postReq(process.env.REACT_APP_POLICY_RUNNER + '/execute',
+				"policyId=" + val + "&noCache=true",
 			(response, err) => {
 				if (err) {
 					this.setState({
@@ -64,8 +66,17 @@ export default class Executor extends ViewBase {
 				} else {
 					console.log("Res: ", response.data);
 					var pretty = JSON.stringify(response.data, undefined, 4);
+					var tbl = '';
+					if (Array.isArray(response.data) && response.data.length > 0) {
+						// We are assuming there is only one result item.
+						const data = response.data[0];
+						console.log("Formatting table for results");
+						tbl = Utils.getResultTable(data.totalHits, data);
+						pretty = '';
+					}
 					this.setState({
-						res: pretty
+						res: pretty,
+						resTbl: tbl
 					});
 				}
 			});
@@ -92,6 +103,7 @@ export default class Executor extends ViewBase {
 							<td colSpan="2">
 								<label>Response:</label>
 								<pre className='maxHeight'>{this.state.res}</pre>
+								<div dangerouslySetInnerHTML={{__html: this.state.resTbl}}></div>
 							</td>
 						</tr>
 					</tbody>

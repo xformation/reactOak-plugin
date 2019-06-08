@@ -51,11 +51,20 @@ export default class Utils {
 		}
 		var entKeys = [];
 		const sources = [];
-		if (data && data.hits && data.hits.hits) {
-			data.hits.hits.forEach((item, key) => {
-				key = item._id;
-				sources.push(item._source);
-				entKeys = Utils.visitEntityForKeys(entKeys, item._source, false);
+		if (data && data.hits) {
+			const hits = (data.hits.hits) ? data.hits.hits : data.hits;
+			hits.forEach((item, key) => {
+				var jobj;
+				if (typeof item === 'string') {
+					jobj = JSON.parse(item);
+					key = jobj.id;
+					sources.push(jobj);
+				} else {
+					key = item._id;
+					jobj = item._source;
+					sources.push(jobj);
+				}
+				entKeys = Utils.visitEntityForKeys(entKeys, jobj, false);
 			});
 			console.log("Keys: ", entKeys);
 		}
@@ -109,8 +118,8 @@ export default class Utils {
 			}
 			keys = Utils.visitEntityForKeys([], item, false);
 		}
-		console.log("keys: ", keys);
-		console.log("item: ", item);
+		//console.log("keys: ", keys);
+		//console.log("item: ", item);
 		if (header) {
 			// create header
 			html += Utils.createTableHeader(keys);
@@ -124,9 +133,9 @@ export default class Utils {
 		if (item) {
 			html += "<tr>";
 			entKeys.forEach((key) => {
-				console.log("key: ", key);
+				//console.log("key: ", key);
 				const val = _.get(item, key, '');
-				console.log("val: ", val);
+				//console.log("val: ", val);
 				if (Array.isArray(val)) {
 					html += "<td>" + Utils.createListByArr(val) + "</td>";
 				} else if (typeof val === 'object') {
@@ -150,7 +159,7 @@ export default class Utils {
 		if (arr && arr.length > 0) {
 			html += "<ul>";
 			arr.forEach((val) => {
-				console.log("Val: ", val);
+				//console.log("Val: ", val);
 				if (Array.isArray(val)) {
 					html += "<li>" + Utils.createListByArr(val) + "</li>";
 				} else if (typeof val === 'object') {
