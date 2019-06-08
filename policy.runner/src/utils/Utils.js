@@ -109,8 +109,8 @@ export default class Utils {
 		var html = '';
 		if (header && typeof item === 'object') {
 			if (keys && keys.length === 1) {
-				// add table caption
-				html += Utils.addCaption(keys);
+				// add table caption for inner tables
+				// html += Utils.addCaption(keys);
 				// Collect json keys to visit
 				if (Object.keys(item).indexOf(keys[0]) !== -1) {
 					item = _.get(item, keys[0]);
@@ -181,7 +181,7 @@ export default class Utils {
 	static createTableHeader(arr) {
 		var html = "<thead>";
 		arr.forEach((key) => {
-			html += "<td>" + key + "</td>";
+			html += "<th>" + key + "</th>";
 		});
 		html += "</thead>";
 		return html;

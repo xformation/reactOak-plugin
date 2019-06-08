@@ -52,11 +52,51 @@
 	z-index: 1;
 }
 
-#trnsResTbl td {
-	border: 1px solid #000;
-}
-
 caption {
+	text-transform: capitalize;
 	text-align: center;
     caption-side: top;
+}
+
+thead {
+	background-color: #627769;
+	text-transform: capitalize;
+}
+
+tbody tr:nth-child(odd) {
+	background-color: #d9e9f7;
+}
+  
+tbody tr:nth-child(even) {
+	background-color: #FFFFFF;
+}
+
+#trnsResTbl {
+	margin: 10px;
+	border-collapse: collapse;
+}
+
+#trnsResTbl table {
+	margin: 5px;
+	background-color: #FFFFFF;
+}
+
+#trnsResTbl table caption {
+	visibility: hidden;
+}
+
+#trnsResTbl table thead {
+	background-color: #ccd8b9;
+}
+
+#trnsResTbl table tbody tr:nth-child(odd) {
+	background-color: #c5e9e3;
+}
+
+#trnsResTbl table tbody tr:nth-child(even) {
+	background-color: #f8e4e4;
+}
+
+#trnsResTbl td {
+	border: 0px;
 }
