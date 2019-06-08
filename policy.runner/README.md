@@ -1,4 +1,18 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Policy.runner
+
+This app is to create UI interface to create rule, policy and execute policies.
+Also we had included english query to DSL query translator in this app.
+
+To build and run this application we need to start applications in following manner.
+
+### Pre-requisites
+
+Start dynamodb
+Start Elasticsearch > 5.5
+Start search micro-service
+Start policy.runner micro-service
+
+Then flow following steps to run this app.
 
 ## Available Scripts
 
