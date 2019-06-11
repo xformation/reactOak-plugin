@@ -1,43 +1,100 @@
 import axios from 'axios';
 import _ from "lodash"
 
-const INDX = "@INDX#";
+//const INDX = "@INDX#";
 
 export default class Utils {
 
-	static visitEntityForKeys(entKeys, entity, visitNested = true, pKey = '') {
+	static visitEntityForKeys(entKeys, entity,
+			visitNested = true, forRctTbl = false, pKey = '') {
+		const cols = [];
 		Object.keys(entity).forEach((key) => {
-			if (visitNested && typeof entity[key] === 'object') {
-				if (Array.isArray(entity[key])) {
-					entKeys = Utils.extractEntityArray(
-						entKeys, entity[key], visitNested, pKey + key);
-				} else if (typeof entity[key] === 'object') {
-					entKeys = Utils.visitEntityForKeys(
-						entKeys, entity[key], visitNested, pKey + key + ".");
-				}
+			const pk = pKey + key;
+			if (visitNested && Array.isArray(entity[key])) {
+				console.log("Key: " + key);
+				Utils.extractEntityArray(
+					cols, entity[key], visitNested, forRctTbl, pk);
+			} else if (visitNested && typeof entity[key] === 'object') {
+				Utils.visitEntityForKeys(
+					cols, entity[key], visitNested, forRctTbl, pk + ".");
 			} else {
-				if (entKeys.indexOf(pKey + key) === -1) {
-					entKeys.push(pKey + key);
+				if (forRctTbl) {
+					const upper = key.replace(/^\w/, c => c.toUpperCase());
+					const obj = {
+						Header: upper,
+						accessor: pk,
+						sortable: true,
+						filterable: true,
+					};
+					var has = false;
+					entKeys.forEach( item => {
+						if (item.Header === upper) {
+							has = true;
+							return;
+						}
+					});
+					if (!has) {
+						cols.push(obj);
+					}
+				} else {
+					if (cols.indexOf(pk) === -1) {
+						cols.push(pk);
+					}
 				}
 			}
-			return entKeys;
+			return cols;
 		});
+		if (cols && cols.length > 0) {
+			if (forRctTbl && pKey && pKey !== '') {
+				var hdr = pKey.replace(/^\w/, c => c.toUpperCase());
+				hdr = hdr.substring(0, (hdr.length - 1));
+				const nobj = {
+					Header: hdr,
+					columns: cols
+				};
+				entKeys.push(nobj);
+			} else {
+				cols.forEach(item => {
+					if (entKeys.indexOf(item) === -1) {
+						entKeys.push(item);
+					}
+				});
+			}
+		}
 		return entKeys;
 	}
 
-	static extractEntityArray(entKeys, arr, key, visitNested = true) {
-		const pKey = key + "[" + INDX + "]";
+	static extractEntityArray(entKeys, arr, forRctTbl, visitNested = true, key) {
+		console.log("akey: " + key);
 		arr.forEach((item) => {
-			if (visitNested && typeof item[key] === 'object') {
-				if (Array.isArray(item)) {
-					entKeys = Utils.extractEntityArray(entKeys, item, pKey);
-				} else if (typeof item === 'object') {
-					entKeys = Utils.visitEntityForKeys(
-						entKeys, item, visitNested, pKey + ".");
-				}
+			if (visitNested && Array.isArray(item)) {
+				entKeys = Utils.extractEntityArray(entKeys, item, key);
+			} else if (typeof item === 'object') {
+				entKeys = Utils.visitEntityForKeys(
+					entKeys, item, visitNested, forRctTbl, key + ".");
 			} else {
-				if (entKeys.indexOf(pKey) === -1) {
-					entKeys.push(pKey);
+				if (forRctTbl) {
+					const upper = key.replace(/^\w/, c => c.toUpperCase());
+					const obj = {
+						Header: upper,
+						accessor: key,
+						sortable: true,
+						filterable: true,
+					};
+					var has = false;
+					entKeys.forEach( item => {
+						if (item.Header === upper) {
+							has = true;
+							return;
+						}
+					});
+					if (!has) {
+						entKeys.push(obj)
+					}
+				} else {
+					if (entKeys.indexOf(key) === -1) {
+						entKeys.push(key);
+					}
 				}
 			}
 			return entKeys;

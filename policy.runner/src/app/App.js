@@ -8,6 +8,7 @@ import Rules from './views/rules/Rules.js';
 import Policy from './views/Policy.js';
 import Executor from './views/Executor.js';
 import QueryPanel from './components/query/QueryPanel.js';
+import SyncTable from './components/table/SyncTable.js';
 
 class App extends React.Component {
 	render() {
@@ -16,6 +17,9 @@ class App extends React.Component {
 				<div>
 					<h1>Policy Runner</h1>
 					<Tabs>
+						<div label="Sample Demo Table">
+							<SyncTable/>
+						</div>
 						<div label="Translator">
 							<QueryPanel id="trans" isTranslate="true"/>
 						</div>
