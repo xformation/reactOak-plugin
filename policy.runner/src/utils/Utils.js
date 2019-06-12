@@ -5,13 +5,52 @@ import _ from "lodash"
 
 export default class Utils {
 
+	static mergeArrOfObjects(left, right) {
+		console.log("Left: ", JSON.stringify(left), "\nRight: ", JSON.stringify(right));
+		if (left && Array.isArray(left) && left.length > 0) {
+			if (right && Array.isArray(right) && right.length > 0) {
+				left.map(itm => ({
+					...right.find((item) => (item.Header === itm.Header) && item),
+					...itm
+				}));
+			}
+			console.log("Output: ", JSON.stringify(left));
+			return left;
+		} else {
+			console.log("Output: ", JSON.stringify(right));
+			return right;
+		}
+	}
+
+	static arrayHasObject(arr, obj) {
+		const res = {res: false};
+		arr.map( (item) => {
+			if (item.Header === obj.Header) {
+				res.res = true;
+			}
+			return item;
+		});
+		console.log("Res: ", res.res);
+		return res.res;
+	}
+
+	static getColObj(key, code) {
+		const upper = key.replace(/^\w/, c => c.toUpperCase());
+		return {
+			Header: upper,
+			accessor: code,
+			sortable: true,
+			filterable: true,
+		};
+	}
+
 	static visitEntityForKeys(entKeys, entity,
 			visitNested = true, forRctTbl = false, pKey = '') {
 		const cols = [];
 		Object.keys(entity).forEach((key) => {
 			const pk = pKey + key;
+			console.log("Key: " + pk);
 			if (visitNested && Array.isArray(entity[key])) {
-				console.log("Key: " + key);
 				Utils.extractEntityArray(
 					cols, entity[key], visitNested, forRctTbl, pk);
 			} else if (visitNested && typeof entity[key] === 'object') {
@@ -19,21 +58,11 @@ export default class Utils {
 					cols, entity[key], visitNested, forRctTbl, pk + ".");
 			} else {
 				if (forRctTbl) {
-					const upper = key.replace(/^\w/, c => c.toUpperCase());
-					const obj = {
-						Header: upper,
-						accessor: pk,
-						sortable: true,
-						filterable: true,
-					};
-					var has = false;
-					entKeys.forEach( item => {
-						if (item.Header === upper) {
-							has = true;
-							return;
-						}
-					});
-					if (!has) {
+					const obj = Utils.getColObj(key, pk);
+					console.log("arr: ", JSON.stringify(cols));
+					console.log("obj: ", obj);
+					if (!Utils.arrayHasObject(cols, obj)) {
+						console.log("pushed");
 						cols.push(obj);
 					}
 				} else {
@@ -44,19 +73,31 @@ export default class Utils {
 			}
 			return cols;
 		});
+		//Utils.mergeArrOfObjects(entKeys, cols);
 		if (cols && cols.length > 0) {
 			if (forRctTbl && pKey && pKey !== '') {
 				var hdr = pKey.replace(/^\w/, c => c.toUpperCase());
 				hdr = hdr.substring(0, (hdr.length - 1));
-				const nobj = {
+				const obj = {
 					Header: hdr,
 					columns: cols
 				};
-				entKeys.push(nobj);
+				console.log("arr: ", entKeys);
+				console.log("obj: ", obj);
+				if (!Utils.arrayHasObject(entKeys, obj)) {
+					console.log("pushed");
+					entKeys.push(obj);
+				}
 			} else {
 				cols.forEach(item => {
-					if (entKeys.indexOf(item) === -1) {
-						entKeys.push(item);
+					if (typeof item === 'object') {
+						if (!Utils.arrayHasObject(entKeys, item)) {
+							entKeys.push(item);
+						}
+					} else {
+						if (entKeys.indexOf(item) === -1) {
+							entKeys.push(item);
+						}
 					}
 				});
 			}
@@ -65,7 +106,7 @@ export default class Utils {
 	}
 
 	static extractEntityArray(entKeys, arr, forRctTbl, visitNested = true, key) {
-		console.log("akey: " + key);
+		console.log("arrkey: " + key);
 		arr.forEach((item) => {
 			if (visitNested && Array.isArray(item)) {
 				entKeys = Utils.extractEntityArray(entKeys, item, key);
@@ -74,22 +115,12 @@ export default class Utils {
 					entKeys, item, visitNested, forRctTbl, key + ".");
 			} else {
 				if (forRctTbl) {
-					const upper = key.replace(/^\w/, c => c.toUpperCase());
-					const obj = {
-						Header: upper,
-						accessor: key,
-						sortable: true,
-						filterable: true,
-					};
-					var has = false;
-					entKeys.forEach( item => {
-						if (item.Header === upper) {
-							has = true;
-							return;
-						}
-					});
-					if (!has) {
-						entKeys.push(obj)
+					const obj = Utils.getColObj(key, key);
+					console.log("arr: ", JSON.stringify(entKeys));
+					console.log("obj: ", obj);
+					if (!Utils.arrayHasObject(entKeys, obj)) {
+						console.log("pushed");
+						entKeys.push(obj);
 					}
 				} else {
 					if (entKeys.indexOf(key) === -1) {
@@ -123,7 +154,7 @@ export default class Utils {
 				}
 				entKeys = Utils.visitEntityForKeys(entKeys, jobj, false);
 			});
-			console.log("Keys: ", entKeys);
+			console.log("Keys: ", JSON.stringify(entKeys));
 		}
 		var html = "<table id='trnsResTbl'>";
 		var header = true;

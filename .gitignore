@@ -26,3 +26,4 @@ uploads/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+/policy.runner/src/utils/*.bcp

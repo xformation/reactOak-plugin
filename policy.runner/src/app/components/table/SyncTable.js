@@ -64,7 +64,8 @@ export default class SyncTable extends React.Component {
 	// }
 	render() {
 		var entKeys = [];
-		this.data.forEach( item => {
+		this.data.forEach( (item, index) => {
+			console.log("----Index: " + index);
 			entKeys = Utils.visitEntityForKeys(entKeys, item, true, true);
 		});
 		console.log("Keys: ", entKeys);
