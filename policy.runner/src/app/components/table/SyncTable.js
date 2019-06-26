@@ -70,7 +70,7 @@ export default class SyncTable extends React.Component {
 		});
 		console.log("Keys: ", entKeys);
 		return (<ReactTable data={this.data} columns={entKeys} minRows="0"
-			getTdProps={(state, rowInfo, column, instance) => {
+			getTrProps={(state, rowInfo, column, instance) => {
 				return {
 					onClick: (e, handleOriginal) => {
 						console.log('A Td Element was clicked!')

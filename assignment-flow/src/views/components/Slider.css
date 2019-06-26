@@ -1,0 +1,51 @@
+.slider {
+	width: 100%;
+	position: relative;
+	min-height: 6em;
+}
+
+.slider div {
+	margin: 5px;
+	padding: 5px;
+	border: none;
+}
+
+.sliderBg {
+	/* background: url(/images/line.png) no-repeat center center fixed;*/
+	/*-webkit-background-size: cover;  For WebKit
+	/*-moz-background-size: cover;     Mozilla*/
+	/*-o-background-size: cover;       Opera*/
+	/*background-size: cover;          Generic*/
+	min-height: 2em;
+	width: 100%;
+	z-index: -1;
+	position: absolute;
+	left: 0;
+	top: 0;
+}
+
+.sliderBg img {
+	margin-top: 5px;
+}
+
+.ticks {
+	z-index: 1;
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 100%;
+}
+
+.ticks table {
+	width: 100%;
+	align-items: center;
+}
+
+.ticks table tbody {
+	text-align: center;
+}
+
+.iconImg {
+	height: 20px;
+	width: 20px;
+}

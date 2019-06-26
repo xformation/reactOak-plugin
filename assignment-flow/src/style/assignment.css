@@ -1,0 +1,18 @@
+.root {
+	margin: 5px;
+}
+
+.assignment, .assignment div {
+	margin: 5px;
+	padding: 5px;
+	border: 1px solid #CCCCCC;
+}
+
+.wizard, .wizard div {
+	padding: 5px;
+	border: 1px solid #CCCCCC;
+}
+
+.assignment p, .wizard p {
+	background-color: #EEEEEE;
+}
