@@ -3,6 +3,7 @@ import React from 'react';
 import Home from './home/Home';
 import Wizard from './wizard/Wizard';
 import Assignment from './assignment/Assignment';
+import SurveyModal from './components/modals/SurveyModal';
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 
@@ -16,6 +17,7 @@ export default class App extends React.Component {
 					<Route exact path="/" component={Home} />
 					<Route path="/assignment" component={Assignment} />
 					<Route path="/wizard" component={Wizard} />
+					<Route path="/survey" component={SurveyModal} />
 				</Switch>
 			</Router>
 		);

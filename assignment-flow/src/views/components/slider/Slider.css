@@ -1,12 +1,13 @@
 .slider {
+	padding: 0px;
 	width: 100%;
 	position: relative;
-	min-height: 6em;
+	min-height: 5em;
+	border: 1px solid #CCCCCC;
 }
 
 .slider div {
-	margin: 5px;
-	padding: 5px;
+	margin: 0px;
 	border: none;
 }
 
@@ -29,6 +30,8 @@
 }
 
 .ticks {
+	margin: 0px;
+	padding: 0px;
 	z-index: 1;
 	position: absolute;
 	left: 0;

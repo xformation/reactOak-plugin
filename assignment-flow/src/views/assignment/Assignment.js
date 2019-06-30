@@ -94,7 +94,7 @@ export default class Assignment extends React.Component {
 	}
 
 	render() {
-		if (this.state.selected === true) {
+		if (this.state.selected) {
 			console.log("Sel: ", this.selAssign)
 			return (
 				<Redirect push

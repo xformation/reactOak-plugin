@@ -1,7 +1,15 @@
 
 export default class Utils {
 
-	static sliderData = [
+	static studentData = {
+		id: 1,
+		name: 'Rajesh',
+		department: 1,
+		course: 'MCA',
+		year: 3
+	}
+
+	static stateData = [
 		{
 			id: 1,
 			text: 'Download',
@@ -131,7 +139,6 @@ export default class Utils {
 
 	static getObjectById(arr, val) {
 		const obj = {};
-		console.log("val: ", val);
 		arr.forEach((s) => {
 			if (s.id === val) {
 				obj.item = s;
