@@ -9,6 +9,7 @@ import Policy from './views/Policy.js';
 import Executor from './views/Executor.js';
 import QueryPanel from './components/query/QueryPanel.js';
 import SyncTable from './components/table/SyncTable.js';
+import StudentForm from './views/student/StudentForm';
 
 class App extends React.Component {
 	render() {
@@ -17,6 +18,9 @@ class App extends React.Component {
 				<div>
 					<h1>Policy Runner</h1>
 					<Tabs>
+						<div label="Student Form">
+							<StudentForm/>
+						</div>
 						<div label="Sample Demo Table">
 							<SyncTable/>
 						</div>
