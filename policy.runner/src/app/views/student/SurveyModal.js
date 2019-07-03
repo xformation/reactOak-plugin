@@ -11,13 +11,17 @@ export default class SurveyModal extends React.Component {
 
 		this.id = this.props.id;
 		this.data = this.props.data;
-		this.handlr = this.props.handler;
+		this.handlr = this.props.clickHandler;
 
 		this.onComplete = this.onComplete.bind(this);
 	}
 
 	onComplete(result) {
-		console.log(this.id + " form complete: ", result);
+		if (this.handlr) {
+			this.handlr(this.id, result);
+		} else {
+			console.log(this.id + " form complete: ", result);
+		}
 	}
 
 	render() {

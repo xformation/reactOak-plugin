@@ -70,10 +70,28 @@ export default class StudentForm extends React.Component {
 		super(props);
 
 		this.state = {
-			show: ''
+			show: '',
+			results: []
 		};
 
+		this.save = this.save.bind(this);
 		this.toggle = this.toggle.bind(this);
+		this.clickHandler = this.clickHandler.bind(this);
+	}
+
+	save() {
+		console.log("Combined res: ", this.state.results);
+	}
+
+	clickHandler(id, result) {
+		console.log(id + ': ', result.data);
+		const res = this.state.results;
+		res.push({
+			[id]: result.data
+		});
+		this.setState({
+			results: res
+		});
 	}
 
 	toggle(e) {
@@ -85,13 +103,13 @@ export default class StudentForm extends React.Component {
 
 	render() {
 		return (
-			<table>
+			<table width="100%">
 				<tbody>
 					<tr>
-						<td>
+						<td style={{width: '30%'}}>
 							<SidePanel />
 						</td>
-						<td>
+						<td style={{width: '70%'}}>
 							<div>
 								<button id='personal' onClick={this.toggle}>Personal Details</button>
 								{this.state.show === 'personal' &&
@@ -110,6 +128,11 @@ export default class StudentForm extends React.Component {
 									<SurveyMoel id='education' data={EDUCATION}
 										clickHandler={this.clickHandler} />}
 							</div>
+						</td>
+					</tr>
+					<tr>
+						<td colSpan="2">
+							<button onClick={this.save}>Save</button>
 						</td>
 					</tr>
 				</tbody>
