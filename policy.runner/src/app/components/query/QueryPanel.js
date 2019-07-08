@@ -29,11 +29,11 @@ export default class QueryPanel extends React.Component {
 	}
 
 	qryChange(e) {
-		const key = e.target.value;
+		const val = e.target.value;
 		this.setState({
-			qry: key
+			qry: val
 		});
-		if (key.length > 2 ) {
+		if (val.length > 2 ) {
 			this.suggestions();
 		}
 	}

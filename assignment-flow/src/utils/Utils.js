@@ -1,3 +1,4 @@
+import axios from 'axios';
 
 export default class Utils {
 
@@ -9,60 +10,36 @@ export default class Utils {
 		year: 3
 	}
 
-	static stateData = [
-		{
-			id: 1,
-			text: 'Download',
-			status: 'Y',
-			active: false
-		}, {
-			id: 2,
-			text: 'Upload',
-			status: 'N',
-			active: true
-		}, {
-			id: 3,
-			text: 'Preview',
-			status: 'N',
-			active: false
-		}, {
-			id: 4,
-			text: 'Submit',
-			status: 'N',
-			active: false
-		}
-	];
-
 	static dataJson = {
 		acadamicYear: 2019,
 		departments: [
 			{
 				id: 1,
-				text: 'Computer Science'
+				name: 'Computer Science'
 			}, {
 				id: 2,
-				text: 'Information Technology'
+				name: 'Information Technology'
 			}
 		],
 		subjects: [
 			{
 				id: 0,
-				text: '--Select--'
+				name: '--Select--'
 			}, {
 				id: 1,
-				text: 'Operating System',
+				name: 'Operating System',
 				department: 1
 			}, {
 				id: 2,
-				text: 'Database System',
+				name: 'Database System',
 				department: 1
 			}, {
 				id: 3,
-				text: 'Web Technology',
+				name: 'Web Technology',
 				department: 1
 			}, {
 				id: 4,
-				text: 'Programming Language',
+				name: 'Programming Language',
 				department: 1
 			}
 		],
@@ -111,6 +88,10 @@ export default class Utils {
 		]
 	};
 
+	static addAtIndex(arr,  index, item ) {
+		arr.splice( index, 0, item );
+	}
+
 	static firstLatterCapital(str) {
 		return str.replace(/^\w/, c => c.toUpperCase());
 	}
@@ -123,6 +104,38 @@ export default class Utils {
 			sortable: true,
 			filterable: true
 		};
+	}
+
+	static getStatesSet(stateData) {
+		const arr = [];
+		console.log("input: ", stateData);
+		stateData.forEach((item) => {
+			if (item.initial) {
+				Utils.addAtIndex(arr, 0, item);
+			} else {
+				let indx = Utils.arrayItemHasKeyValue(
+					arr, 'name', item.target);
+				if (indx >= 0) {
+					Utils.addAtIndex(arr, indx, item);
+				} else {
+					arr.push(item);
+				}
+			}
+		});
+		console.log("output: ", arr);
+		return arr;
+	}
+
+	static arrayItemHasKeyValue(arr, key, val) {
+		const res = {res: -1};
+		arr.map( (item, indx) => {
+			if (item[key] === val) {
+				res.res = indx;
+			}
+			return item;
+		});
+		console.log("Res: ", res.res);
+		return res.res;
 	}
 
 	static arrayHasObject(arr, obj) {
@@ -145,6 +158,31 @@ export default class Utils {
 			}
 		});
 		return obj.item;
+	}
+
+	static postReq(url, data, callback) {
+		return new Promise((resolve, reject) => {
+			axios.post(
+				url,
+				data
+			).then((response) => {
+				resolve(response);
+			}).catch((error) => {
+				console.error("POST Err: ", error);
+				reject(error);
+			});
+		});
+	}
+
+	static getReq(url) {
+		return new Promise((resolve, reject) => {
+			axios.get(url).then((response) => {
+				resolve(response);
+			}).catch((error) => {
+				console.error("GET Err: ", error);
+				reject(error);
+			});
+		});
 	}
 
 }

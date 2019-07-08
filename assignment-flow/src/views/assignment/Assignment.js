@@ -35,8 +35,8 @@ export default class Assignment extends React.Component {
 				row.assignment = asign.assignment;
 				const sb = Utils.getObjectById(Utils.dataJson.subjects, sub);
 				const dep = Utils.getObjectById(Utils.dataJson.departments, sb.department);
-				row.subject = sb.text;
-				row.department = dep.text;
+				row.subject = sb.name;
+				row.department = dep.name;
 				console.log("Row: ", row);
 				lst.push(row);
 			}
@@ -114,7 +114,7 @@ export default class Assignment extends React.Component {
 								<select name="subject" value={this.state.subject}
 									onChange={this.subChange}>
 									{Utils.dataJson.subjects.map((opt, ind) =>
-										<option key={ind} value={opt.id}>{opt.text}</option>)}
+										<option key={ind} value={opt.id}>{opt.name}</option>)}
 								</select>
 							</p>
 						</div>

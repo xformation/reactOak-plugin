@@ -14,10 +14,10 @@ export default class App extends React.Component {
 		return (
 			<Router>
 				<Switch>
-					<Route exact path="/" component={Home} />
-					<Route path="/assignment" component={Assignment} />
-					<Route path="/wizard" component={Wizard} />
-					<Route path="/survey" component={SurveyModal} />
+					<Route key="/" exact path="/" component={Home} />
+					<Route key="/assignment" path="/assignment" component={Assignment} />
+					<Route key="/wizard" path="/wizard" component={Wizard} />
+					<Route key="/survey" path="/survey" component={SurveyModal} />
 				</Switch>
 			</Router>
 		);

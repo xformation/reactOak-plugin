@@ -1,0 +1,28 @@
+.dynamicForm {
+	width: 100%;
+	min-height: 1cm;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
+}
+
+.errorMsg {
+	background-color: #FFCCCC;
+}
+
+.headerRow {
+	background-color: #DDDDDD;
+	font-weight: bolder;
+}
+
+.dynamicForm table {
+	margin: 5px;
+}
+
+.dynamicForm table tbody {
+	text-align: left;
+}
+
+.dynamicForm table tbody tr td {
+	padding: 10px;
+}

@@ -1,8 +1,10 @@
 import React from 'react';
+import './../../../style/App.css';
 import { Redirect } from "react-router-dom";
 
 import * as Survey from "survey-react";
 import "survey-react/survey.css";
+import "./../surveyjs/SurveyJsButton";
 Survey.StylesManager.applyTheme("default");
 
 export default class SurveyModal extends React.Component {
@@ -41,8 +43,14 @@ export default class SurveyModal extends React.Component {
 		} else {
 			return (
 				<div>
-					<Survey.Survey json={this.data} showCompletePage="false" onComplete={this.onComplete} />
-					<button onClick={this.closeModal}>Cancel</button>
+					{
+						this.data ?
+						<Survey.Survey json={this.data} showCompletePage="false" onComplete={this.onComplete} /> :
+						<div className="divLoader">
+							Retry the action to get it working.<br/>
+							Either refresh or go back to get the view rendered.
+						</div>
+					}
 				</div>
 			);
 		}

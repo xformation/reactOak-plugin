@@ -1,5 +1,6 @@
 import React from 'react';
 import './../../style/App.css';
+import DynamicForm from './../components/modals/DynamicForm';
 import { Redirect } from "react-router-dom";
 
 export default class Home extends React.Component {
@@ -10,6 +11,12 @@ export default class Home extends React.Component {
 			clicked: false
 		};
 		this.onClick = this.onClick.bind(this);
+		this.btnHandler = this.btnHandler.bind(this);
+	}
+
+	btnHandler(e, result) {
+		console.log('You have clicked on: ' + e.target.name);
+		console.log('Your inputs: ', result);
 	}
 
 	onClick() {
@@ -28,7 +35,8 @@ export default class Home extends React.Component {
 				/>);
 		} else {
 			return (
-				<div className="App" >
+				<div key="bDivApp" className="App" >
+					<DynamicForm json={DynamicForm.dynaFormInput} downloadOnClick={this.btnHandler}/>
 					<header className="App-header">
 						<p>
 							In this wizard we will setup step by step process for Assignment submission.

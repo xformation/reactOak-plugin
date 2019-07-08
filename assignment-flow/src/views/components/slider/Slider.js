@@ -21,14 +21,15 @@ export default class Slider extends React.Component {
 						<img className="iconImg" src="/images/tick.jpg" alt="Done"/> :
 						<img className="iconImg" src="/images/cross.jpg" alt="Pending"/>
 				} <br/>
-				{item.text} <br/>
+				{item.name} <br/>
 				<button id={item.id} onClick={this.clickHandler}
 					disabled={!item.active}>Click Here</button>
-			</td>);
+			</td>
+		);
 	}
 
 	clickHandler(e) {
-		const item = Utils.getObjectById(this.data, parseInt(e.target.id));
+		const item = Utils.getObjectById(this.data, e.target.id);
 		if (this.props.clickHandler) {
 			this.props.clickHandler(item);
 			return;
