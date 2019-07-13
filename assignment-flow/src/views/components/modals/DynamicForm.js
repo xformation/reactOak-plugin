@@ -15,9 +15,9 @@ import BaseComponent from '../../BaseComponent';
  * 
  * you can define actions for your controls by using properties naming convesion:
  * 
- * '<control-name>onClick' for clickable elements like buttons
+ * '<control-name>OnClick' for clickable elements like buttons
  * 
- * '<control-name>onChange' for handing change events of elements like text, radio or checkbox
+ * '<control-name>OnChange' for handing change events of elements like text, radio or checkbox
  * 
  * i.e.
  * 
@@ -154,33 +154,37 @@ export default class DynamicForm extends BaseComponent {
 		const errs = [];
 		if (myProps && myProps.json) {
 			const eleToValidate = DynamicForm.getElesToValidate(myProps.json);
+			console.log('inputs:', this.state.inputs, "eles: ", eleToValidate);
 			if (eleToValidate && eleToValidate.length > 0) {
 				eleToValidate.forEach(key => {
 					if (!this.state.inputs[key]) {
 						errs.push(key + " is Required.");
 					}
 				});
-				finished = true;
 			}
 			if (errs.length > 0) {
 				this.setState({
 					errors: errs
 				});
+			} else {
+				finished = true;
 			}
 		}
+		console.log("isFinished: " + finished);
 		return finished;
 	}
 
 	handleFinish() {
 		if (!this.isFinished()) {
 			return;
-		}
-		console.log('Result: ', this.state.inputs);
-		const myProps = this.state.userProps;
-		if (myProps && myProps.onSubmit) {
-			myProps.onSubmit(this.state.inputs);
 		} else {
-			console.warn('No submit handler defined.');
+			console.log('Result: ', this.state.inputs);
+			const myProps = this.state.userProps;
+			if (myProps && myProps.onSubmit) {
+				myProps.onSubmit(this.state.inputs);
+			} else {
+				console.warn('No submit handler defined.');
+			}
 		}
 	}
 

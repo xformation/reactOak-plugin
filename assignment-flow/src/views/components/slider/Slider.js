@@ -7,8 +7,11 @@ export default class Slider extends React.Component {
 	constructor(props) {
 		super(props);
 
-		this.data = this.props.data;
-		this.entity = this.props.entity;
+		this.state = {
+			data: this.props.data,
+			entity: this.props.entity
+		}
+
 		this.createCol = this.createCol.bind(this);
 		this.clickHandler = this.clickHandler.bind(this);
 	}
@@ -29,7 +32,7 @@ export default class Slider extends React.Component {
 	}
 
 	clickHandler(e) {
-		const item = Utils.getObjectById(this.data, e.target.id);
+		const item = Utils.getObjectById(this.state.data, e.target.id);
 		if (this.props.clickHandler) {
 			this.props.clickHandler(item);
 			return;
@@ -46,7 +49,7 @@ export default class Slider extends React.Component {
 					<table>
 						<tbody>
 							<tr>
-								{this.data.map(item => this.createCol(item))}
+								{this.state.data.map(item => this.createCol(item))}
 							</tr>
 						</tbody>
 					</table>

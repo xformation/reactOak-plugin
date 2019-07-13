@@ -1,9 +1,10 @@
 .dynamicForm {
-	width: 100%;
+	min-width: 1em;
 	min-height: 1cm;
 	align-items: center;
 	text-align: center;
 	justify-content: center;
+	border: 1px solid #CCCCCC;
 }
 
 .errorMsg {

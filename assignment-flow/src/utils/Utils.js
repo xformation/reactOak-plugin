@@ -88,6 +88,15 @@ export default class Utils {
 		]
 	};
 
+	static getFileNodePath(asignId, subId, studentId) {
+		return '/synectiks/cms/assignments/'
+			+ asignId + '/sub/' + subId + '/student/' + studentId;
+	}
+
+	static getSSMachineId(ssmid, asignId, studentId) {
+		return ssmid + ":" + asignId + "-" + studentId;
+	}
+
 	static addAtIndex(arr,  index, item ) {
 		arr.splice( index, 0, item );
 	}
@@ -160,11 +169,12 @@ export default class Utils {
 		return obj.item;
 	}
 
-	static postReq(url, data, callback) {
+	static postReq(url, data, opts) {
 		return new Promise((resolve, reject) => {
 			axios.post(
 				url,
-				data
+				data,
+				opts
 			).then((response) => {
 				resolve(response);
 			}).catch((error) => {

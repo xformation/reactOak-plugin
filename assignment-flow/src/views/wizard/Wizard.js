@@ -18,16 +18,14 @@ export default class Wizard extends React.Component {
 		super(props);
 
 		this.state = {
-			assign: {},
+			assign: this.props.location.assignment,
 			subject: {},
 			jsonData: {},
 			isLoading: true,
 			showModel: false,
 			stateData: []
 		};
-		this.asgn = this.props.location.assignment;
 
-		this.select = this.select.bind(this);
 		this.setSubject = this.setSubject.bind(this);
 		this.clickHandler = this.clickHandler.bind(this);
 		this.setSsmStates = this.setSsmStates.bind(this);
@@ -41,9 +39,9 @@ export default class Wizard extends React.Component {
 	}
 
 	setSsmStates() {
-		if (this.asgn) {
-			this.SSMID = 'SubId-' + this.asgn.subject;
-			const path = LIST_STATES + '?ssmId=SubId-' + this.asgn.subject;
+		if (this.state.assign) {
+			this.SSMID = 'SubId-' + this.state.assign.subject;
+			const path = LIST_STATES + '?ssmId=' + this.SSMID;
 			Utils.getReq(process.env.REACT_APP_SSM + path)
 				.then((res) => {
 					console.log('Res: ', res);
@@ -56,7 +54,7 @@ export default class Wizard extends React.Component {
 					} else {
 						console.warn('Invalid response for ' + LIST_STATES);
 					}
-					this.fetchCurState(this.asgn.id, Utils.studentData.id);
+					this.fetchCurState(this.state.assign.id, Utils.studentData.id);
 				}).catch((err) => {
 					console.error('Failed to fetch ' + LIST_STATES, err);
 				});
@@ -64,7 +62,7 @@ export default class Wizard extends React.Component {
 	}
 
 	fetchCurState(asignId, studentId) {
-		const machineId = this.SSMID + ":" + asignId + "-" + studentId;
+		const machineId = Utils.getSSMachineId(this.SSMID, asignId, studentId);
 		const data = {
 			machineId: machineId
 		}
@@ -98,12 +96,11 @@ export default class Wizard extends React.Component {
 
 	setSubject() {
 		// Set page objects
-		if (this.asgn) {
-			console.log("Assign: ", this.asgn);
+		if (this.state.assign) {
+			console.log("Assign: ", this.state.assign);
 			const subject = Utils.getObjectById(
-				Utils.dataJson.subjects, parseInt(this.asgn.subject));
+				Utils.dataJson.subjects, parseInt(this.state.assign.subject));
 			this.setState({
-				assign: this.asgn,
 				subject: subject
 			});
 		}
@@ -111,42 +108,38 @@ export default class Wizard extends React.Component {
 
 	clickHandler(item) {
 		console.log("You had selected state: ", item);
-		if (!this.handler) {	
+		if (!this.handler) {
+			const data = {
+				url: process.env.REACT_APP_OAK_URL,
+				student: Utils.studentData,
+				selState: item
+			}
 			this.handler = ActionFactory.getHandlerInstance(
-				ActionFactory.Actions.ASSIGNMENT, item);
+				ActionFactory.Actions.ASSIGNMENT, data);
 		}
-		const json = this.handler.getPageJson();
-		console.log("json: ", json);
 		this.setState({
-			jsonData: json,
 			showModel: true
 		});
-	}
-
-	select() {
-		console.log("You had selected an assignment.");
 	}
 
 	render() {
 		if (this.state.isLoading) {
 			return (
 				<div className="divLoader">
-					<img src="/images/loader.gif" alt="Loader"/>
+					<img src="/images/loader.gif" alt="Loader" />
 				</div>
 			);
 		} else if (this.state.showModel) {
-			const dt = this.state.jsonData;
 			const hndlr = this.handler;
-			const asign = this.asgn;
-			console.log("data: ", dt);
+			const asign = this.state.assign;
 			return (
 				<Redirect push
 					to={{
-						pathname: "/survey",
-						data: dt,
+						pathname: "/modal",
 						handler: hndlr,
-						assignment: asign
-					}} 
+						assignment: asign,
+						student: Utils.studentData
+					}}
 				/>);
 		} else {
 			return (
@@ -161,7 +154,7 @@ export default class Wizard extends React.Component {
 							Assigment: <b>{this.state.assign ? this.state.assign.assignment : ''}</b>
 						</p>
 						<Slider data={this.state.stateData}
-							entity={Utils.studentData} clickHandler={this.clickHandler}/>
+							entity={Utils.studentData} clickHandler={this.clickHandler} />
 					</div>
 				</div>
 			);
