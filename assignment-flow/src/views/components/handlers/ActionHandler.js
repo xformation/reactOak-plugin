@@ -10,7 +10,13 @@ export default class ActionHandler {
 		this.execute = this.execute.bind(this);
 		this.getPageJson = this.getPageJson.bind(this);
 		this.getPageType = this.getPageType.bind(this);
+		this.dynamicProps = this.dynamicProps.bind(this);
 		this.getSelectedState = this.getSelectedState.bind(this);
+	}
+
+	dynamicProps() {
+		// override it to return actual action hadlers.
+		return {};
 	}
 
 	getSelectedState() {

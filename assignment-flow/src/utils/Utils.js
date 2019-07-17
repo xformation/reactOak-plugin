@@ -89,8 +89,14 @@ export default class Utils {
 	};
 
 	static getFileNodePath(asignId, subId, studentId) {
-		return '/synectiks/cms/assignments/'
-			+ asignId + '/sub/' + subId + '/student/' + studentId;
+		let path = '/synectiks/cms/assignments/' + asignId;
+		if (subId) {
+			path += '/sub/' + subId;
+		}
+		if (studentId) {
+			path += '/student/' + studentId;
+		}
+		return path;
 	}
 
 	static getSSMachineId(ssmid, asignId, studentId) {
@@ -169,7 +175,7 @@ export default class Utils {
 		return obj.item;
 	}
 
-	static postReq(url, data, opts) {
+	static postReq(url, data, opts = {}) {
 		return new Promise((resolve, reject) => {
 			axios.post(
 				url,
@@ -193,6 +199,26 @@ export default class Utils {
 				reject(error);
 			});
 		});
+	}
+
+	static createNodeInOak(url, nodePath, file, sPath) {
+		const data = new FormData();
+		data.append('parentPath', nodePath);
+		if (file && sPath) {
+			file.path = sPath;
+			data.append('json', JSON.stringify(file));
+			data.append('cls', 'com.synectiks.commons.entities.oak.OakFileNode');
+		} else {
+			data.append('json', file);
+		}
+		data.append('nodeName', nodePath.substring(nodePath.lastIndexOf('/') + 1));
+		Utils.postReq(url, data, {})
+			.then((res) => {
+				console.log('Successfully created node: ', res.data);
+			})
+			.catch((err) => {
+				console.error('Failed to fetch ' + url, err);
+			});
 	}
 
 }

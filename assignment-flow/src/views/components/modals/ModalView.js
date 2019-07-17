@@ -20,7 +20,17 @@ export default class ModalView extends React.Component {
 			usrData: this.props.location
 		}
 
+		this.closeWin = this.closeWin.bind(this);
 		this.onComplete = this.onComplete.bind(this);
+		this.actionExecutor = this.actionExecutor.bind(this);
+	}
+
+	actionExecutor(inputs) {
+		const data = {
+			assignment: this.state.usrData.assignment,
+			input: inputs
+		}
+		this.state.usrData.handler.execute(data);
 	}
 
 	onComplete(result) {
@@ -34,14 +44,18 @@ export default class ModalView extends React.Component {
 		Utils.postReq(process.env.REACT_APP_SSM + "/ssm/states/sendEvent?" + params, {})
 			.then((res) => {
 				console.log('is sendEvent successful: ', res);
-				// Close model dialog
-				this.setState({
-					close: true
-				});
+				this.closeWin();
 			})
 			.catch((err) => {
 				console.error('Failed to fetch /ssm/states/sendEvent', err);
 			});
+	}
+
+	closeWin() {
+		// Close model dialog
+		this.setState({
+			close: true
+		});
 	}
 
 	render() {
@@ -61,7 +75,9 @@ export default class ModalView extends React.Component {
 			if (pgType === ActionHandler.PageTypes.DYN_FRM) {
 				return (
 					<div className="divLoader">
-						<DynamicForm json={data} {...dprops} onSubmit={this.onComplete}/>
+						<DynamicForm json={data}
+							{...dprops}
+							defaultOnClick={this.actionExecutor} onSubmit={this.onComplete}/> 
 					</div>
 				);
 			} else {
@@ -78,7 +94,7 @@ export default class ModalView extends React.Component {
 						Retry the action to get it working.<br/>
 						Either refresh or go back to get the view rendered.
 						<br/>
-						<button onClick={this.onComplete}>Close</button>
+						<button onClick={this.closeWin}>Close</button>
 					</p>
 				</div>
 			);

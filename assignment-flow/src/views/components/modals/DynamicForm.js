@@ -19,12 +19,15 @@ import BaseComponent from '../../BaseComponent';
  * 
  * '<control-name>OnChange' for handing change events of elements like text, radio or checkbox
  * 
+ * Additionaly there is default function call feature which is being set by "defaultOnClick" 
+ * if there is a button with "hasaction=true" and no handler method found, we call this action.
+ * 
  * i.e.
  * 
  * <DynamicForm json={DynamicForm.dynaFormInput}
  * 	submitText='Save'
  * 	onSubmit={this.handleFinish}
- * 	downloadOnClick={this.downloadFile}
+ * 	defaultOnClick={this.downloadFile}
  * 	tmpTextOnChange={this.handleTextchange}/>
  * 
  * You will get 2 params in handler methods first is 'Event' and
@@ -44,6 +47,7 @@ export default class DynamicForm extends BaseComponent {
 	static ControlTypes = {
 		BUTTON: 'BUTTON',
 		CHECKBOX: 'CHECK',
+		FILE: 'FILE',
 		LABEL: 'LABEL',
 		RADIO: 'RADIO',
 		TEXT: 'TEXT'
@@ -83,6 +87,11 @@ export default class DynamicForm extends BaseComponent {
 					{'key': 3, 'value': 'C'},
 					{'key': 4, 'value': 'D'}
 				]
+			}, {
+				type: DynamicForm.ControlTypes.FILE,
+				name: 'upAssign',
+				text: 'Upload your assignment for review.',
+				isRequired: true
 			}
 		]
 	};
@@ -114,7 +123,9 @@ export default class DynamicForm extends BaseComponent {
 	changeHandler(e) {
 		const key = e.target.name;
 		const inputs = this.state.inputs;
-		if (e.target.type === 'checkbox') {
+		if (e.target.type === 'file') {
+			inputs[key] = e.target.files[0];
+		} else if (e.target.type === 'checkbox') {
 			inputs[key] = e.target.checked;
 		} else {
 			inputs[key] = e.target.value;
@@ -140,8 +151,21 @@ export default class DynamicForm extends BaseComponent {
 		if (e.target.getAttribute('hasaction') === 'true') {
 			const handler = DynamicForm.getTragetHanler(
 				this.state.userProps, e.target.name, DynamicForm.ActionTypes.CLICK);
+			console.log("handler: ", handler);
 			if (handler && typeof handler === 'function') {
 				handler(e, this.state.inputs);
+			} else {
+				console.log("event: ", e.target);
+				if (e.target.type === 'button') {
+					console.log("Calling default action handler to execute");
+					// call defaultOnClick handler to call ActionHandler.execute()
+					const myProps = this.state.userProps;
+					if (myProps && myProps.defaultOnClick) {
+						myProps.defaultOnClick(this.state.inputs);
+					} else {
+						console.warn('No defaultOnClick handler defined.');
+					}
+				}
 			}
 		} else {
 			console.warn("You have not defined any action handler for " + e.target.name + ".");
@@ -201,6 +225,7 @@ export default class DynamicForm extends BaseComponent {
 
 		this.getRadio = this.getRadio.bind(this);
 		this.createRow = this.createRow.bind(this);
+		this.createFile = this.createFile.bind(this);
 		this.createLabel = this.createLabel.bind(this);
 		this.createRadio = this.createRadio.bind(this);
 		this.createButton = this.createButton.bind(this);
@@ -255,6 +280,10 @@ export default class DynamicForm extends BaseComponent {
 						cntrls.push(this.createRow(
 							this.createCheckbox(element), indx));
 						break;
+					case DynamicForm.ControlTypes.FILE:
+						cntrls.push(this.createRow(
+							this.createFile(element), indx));
+						break;
 					case DynamicForm.ControlTypes.LABEL:
 						cntrls.push(this.createRow(
 							this.createLabel(element), indx));
@@ -287,11 +316,38 @@ export default class DynamicForm extends BaseComponent {
 	}
 
 	/**
+	 * Method to render a react file node from input json with props:
+	 * @requires type: DynamicForm.ControlTypes.FILE,
+	 * @requires text: 'Select File',
+	 * @otherProps isRequired: true,
+	 * @otherProps name: 'file',
+	 * @param {JSON} ele 
+	 */
+	createFile(ele) {
+		if (ele && ele.type === DynamicForm.ControlTypes.FILE) {
+			const prop = {};
+			if (ele.name) {
+				prop.id = ele.name;
+				prop.name = ele.name;
+				prop.placeholder = ele.text;
+			}
+			if (ele.hasaction) {
+				prop.hasaction = 'true';
+			}
+			return (
+				<input key={'file-dynFrm' + ele.name} type="file"
+					onChange={this.changeHandler}
+					{...prop}/>
+			);
+		}
+	}
+
+	/**
 	 * Method to render a react textbox from input json with props:
 	 * @requires type: DynamicForm.ControlTypes.TEXT,
-	 * @requires text: 'Select me',
+	 * @requires text: 'Enter text',
 	 * @otherProps isRequired: true,
-	 * @otherProps name: 'chk',
+	 * @otherProps name: 'txt',
 	 * @otherProps hasaction: true
 	 * @param {JSON} ele 
 	 */
@@ -415,7 +471,8 @@ export default class DynamicForm extends BaseComponent {
 		if (ele && ele.type === DynamicForm.ControlTypes.BUTTON) {
 			const prop = {
 				id: ele.name,
-				name: ele.name
+				name: ele.name,
+				type: 'button'
 			};
 			if (ele.hasaction) {
 				prop.hasaction = 'true';
