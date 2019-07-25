@@ -1,0 +1,54 @@
+select, input, .App input {
+	margin: 5px;
+}
+label {
+	margin-bottom: 0px;
+}
+
+.fltrInput {
+	margin-right: 5px;
+}
+
+.lmargin20 {
+	margin-left: 20px;
+}
+
+.selImg {
+	margin: 2px;
+	border: 2px solid #FF000F;
+}
+
+label {
+	font-weight: normal;
+}
+
+.title {
+	font-weight: bold;
+}
+
+.imgTag {
+	margin: 2px;
+}
+
+datalist {
+	display: flex;
+	font-size: 8pt;
+	margin-left: 5px;
+}
+
+.divLoader {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.fltrDiv {
+	text-align: left;
+	margin: 5px;
+}
+
+.fltrTitle {
+	font-weight: bolder;
+}
