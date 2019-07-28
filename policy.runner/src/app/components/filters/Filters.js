@@ -1,5 +1,6 @@
 import React from 'react';
 import './Filters.css';
+import Utils from '../../../utils/Utils';
 
 const filterTypes = {
 	TEXT: 'TEXT',
@@ -11,10 +12,35 @@ const filterTypes = {
 	OPT_LIST: 'OPT_LIST'
 };
 
+/**
+ * Component to create a filter with json response.
+ * Uses:
+ * <Filters json={Filters.INPUTJSON}/>
+ * This type of use will create the filter ui and will reload the page
+ * with selected params and the url will be the context url (Visible in browser)
+ * 
+ * If you need to handle or pass an api url to fetch the recordes then.
+ * Url should be specified in the "baseUrl" property of input json.
+ * It works with GET only. You have to handle the reponse your own.
+ * Uses:
+ * <Filters json={Filters.INPUTJSON} resultCallback={this.resHandler}/>
+ * 
+ * sample "resHandler" implementation:
+ * resHandler(data) {
+		let html = '';
+		if (data && Array.isArray(data)) {
+			html = Utils.createTableByArray(data);
+		}
+		this.setState({
+			result: html
+		})
+	}
+ */
 export default class Filters extends React.Component {
 
 	static INPUTJSON = {
-		//baseUrl: 'http://localhost:3000',
+		//baseUrl: 'https://restcountries.eu/rest/v2/all',
+		baseUrl: 'https://restcountries.eu/rest/v2/regionalbloc/SAARC',
 		sortby: [
 			{
 				title: 'Favorite',
@@ -106,10 +132,12 @@ export default class Filters extends React.Component {
 		this.keyPressed = this.keyPressed.bind(this);
 		this.reloadPage = this.reloadPage.bind(this);
 		this.handleChange = this.handleChange.bind(this);
+		this.reloadOrFetch = this.reloadOrFetch.bind(this);
 	}
 
 	componentWillMount() {
-		const url = window.location.href;
+		const url = (this.props.json && this.props.json.baseUrl) ? this.props.json.baseUrl : window.location.href;
+		console.log(url);
 		if (url.indexOf("?") > 0) {
 			this.baseUrl = url.substring(0, url.indexOf("?"));
 		} else {
@@ -198,8 +226,29 @@ export default class Filters extends React.Component {
 				}
 				return indx;
 			});
+		}
+		this.reloadOrFetch(params);
+	}
+
+	reloadOrFetch(params) {
+		const url = this.baseUrl + "?" + params;
+		console.log("Redirecting to: " + url);
+		if (this.props.resultCallback) {
+			Utils.getReq(url).then((res) => {
+				this.props.resultCallback(res.data);
+			});
+			// this.props.resultCallback([
+			// 	{
+			// 		"name":"Afghanistan", "topLevelDomain":[".af"], "alpha2Code":"AF",
+			// 		"alpha3Code":"AFG", "callingCodes":["93"], "capital":"Kabul"
+			// 	}, {
+			// 		"name":"Åland Islands", "topLevelDomain":[".ax"], "alpha2Code":"AX",
+			// 		"alpha3Code":"ALA", "callingCodes":["358"], "capital":"Mariehamn"
+			// 	}
+			// ]);
+		} else {
 			setTimeout(() => {
-				window.location.href = this.baseUrl + "?" + params;
+				window.location.href = url;
 			}, 1000);
 		}
 	}

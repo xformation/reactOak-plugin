@@ -11,8 +11,30 @@ import QueryPanel from './components/query/QueryPanel.js';
 import SyncTable from './components/table/SyncTable.js';
 import StudentForm from './views/student/StudentForm';
 import Filters from './components/filters/Filters';
+import Utils from './../utils/Utils';
 
 class App extends React.Component {
+
+	constructor(props) {
+		super(props);
+
+		this.state = {
+			result: ''
+		}
+
+		this.resHandler = this.resHandler.bind(this);
+	}
+
+	resHandler(data) {
+		let html = '';
+		if (data && Array.isArray(data)) {
+			html = Utils.createTableByArray(data);
+		}
+		this.setState({
+			result: html
+		})
+	}
+
 	render() {
 		return (
 			<div className="App">
@@ -20,7 +42,8 @@ class App extends React.Component {
 					<h1>Policy Runner</h1>
 					<Tabs>
 						<div label="Filters">
-							<Filters json={Filters.INPUTJSON}/>
+							<Filters json={Filters.INPUTJSON} resultCallback={this.resHandler}/>
+							<div dangerouslySetInnerHTML={{__html: this.state.result}}></div>
 						</div>
 						<div label="Student Form">
 							<StudentForm/>

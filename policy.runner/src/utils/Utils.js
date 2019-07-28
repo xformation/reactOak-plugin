@@ -47,6 +47,9 @@ export default class Utils {
 	static visitEntityForKeys(entKeys, entity,
 			visitNested = true, forRctTbl = false, pKey = '') {
 		const cols = [];
+		if (!entity) {
+			return cols;
+		}
 		Object.keys(entity).forEach((key) => {
 			const pk = pKey + key;
 			console.log("Key: " + pk);
@@ -156,12 +159,16 @@ export default class Utils {
 			});
 			console.log("Keys: ", JSON.stringify(entKeys));
 		}
+		return Utils.createTableByArray(sources, entKeys);
+	}
+
+	static createTableByArray(sources, entKeys, caption = true) {
 		var html = "<table id='trnsResTbl'>";
 		var header = true;
 		var keys = [];
 		sources.forEach((item) => {
 			console.log("Item: ", item);
-			if (typeof item === 'object') {
+			if (caption && typeof item === 'object') {
 				if (entKeys && entKeys.length === 1) {
 					if (header) {
 						// add table caption
@@ -196,7 +203,7 @@ export default class Utils {
 	static createTableByJson(keys, item, header) {
 		var html = '';
 		if (header && typeof item === 'object') {
-			if (keys && keys.length === 1) {
+			if (item && keys && keys.length === 1) {
 				// add table caption for inner tables
 				// html += Utils.addCaption(keys);
 				// Collect json keys to visit
