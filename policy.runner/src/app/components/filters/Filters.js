@@ -15,15 +15,18 @@ const filterTypes = {
 /**
  * Component to create a filter with json response.
  * Uses:
- * <Filters json={Filters.INPUTJSON}/>
+ * <Filters json={Filters.INPUTJSON} isApply="true"/>
  * This type of use will create the filter ui and will reload the page
  * with selected params and the url will be the context url (Visible in browser)
+ * 
+ * isApply="true":
+ *    Set this if you want to get page reload or filters applied on clicking apply button.
  * 
  * If you need to handle or pass an api url to fetch the recordes then.
  * Url should be specified in the "baseUrl" property of input json.
  * It works with GET only. You have to handle the reponse your own.
  * Uses:
- * <Filters json={Filters.INPUTJSON} resultCallback={this.resHandler}/>
+ * <Filters json={Filters.INPUTJSON} resultCallback={this.resHandler} isApply="true"/>
  * 
  * sample "resHandler" implementation:
  * resHandler(data) {
@@ -40,7 +43,7 @@ export default class Filters extends React.Component {
 
 	static INPUTJSON = {
 		//baseUrl: 'https://restcountries.eu/rest/v2/all',
-		baseUrl: 'https://restcountries.eu/rest/v2/regionalbloc/SAARC',
+		//baseUrl: 'https://restcountries.eu/rest/v2/regionalbloc/SAARC',
 		sortby: [
 			{
 				title: 'Favorite',
@@ -133,9 +136,11 @@ export default class Filters extends React.Component {
 		this.reloadPage = this.reloadPage.bind(this);
 		this.handleChange = this.handleChange.bind(this);
 		this.reloadOrFetch = this.reloadOrFetch.bind(this);
+		this.createApplyButton = this.createApplyButton.bind(this);
 	}
 
 	componentWillMount() {
+		this.isApply = (this.props.isApply && this.props.isApply === 'true') ? true : false;
 		const url = (this.props.json && this.props.json.baseUrl) ? this.props.json.baseUrl : window.location.href;
 		console.log(url);
 		if (url.indexOf("?") > 0) {
@@ -214,7 +219,10 @@ export default class Filters extends React.Component {
 		}
 	}
 
-	reloadPage() {
+	reloadPage(e) {
+		if (this.isApply && !e) {
+			return;
+		}
 		let params = '';
 		if (this.state.filters) {
 			Object.entries(this.state.filters).map(([key, val], indx) => {
@@ -237,15 +245,6 @@ export default class Filters extends React.Component {
 			Utils.getReq(url).then((res) => {
 				this.props.resultCallback(res.data);
 			});
-			// this.props.resultCallback([
-			// 	{
-			// 		"name":"Afghanistan", "topLevelDomain":[".af"], "alpha2Code":"AF",
-			// 		"alpha3Code":"AFG", "callingCodes":["93"], "capital":"Kabul"
-			// 	}, {
-			// 		"name":"Åland Islands", "topLevelDomain":[".ax"], "alpha2Code":"AX",
-			// 		"alpha3Code":"ALA", "callingCodes":["358"], "capital":"Mariehamn"
-			// 	}
-			// ]);
 		} else {
 			setTimeout(() => {
 				window.location.href = url;
@@ -273,6 +272,16 @@ export default class Filters extends React.Component {
 		});
 	}
 
+	createApplyButton() {
+		if (this.isApply) {
+			return(
+				<button id="btnAply" key="btnAply-Fltr" onClick={this.reloadPage}>Apply</button>
+			);
+		} else {
+			return null;
+		}
+	}
+
 	render() {
 		if (this.state.isLoading) {
 			return (
@@ -284,6 +293,13 @@ export default class Filters extends React.Component {
 			return (
 				<div className="fltrDiv">
 					<table key='tbl-fltrFrm'>
+						{this.isApply && <thead key="aply-fltrth">
+							<tr key="aply-fltrtr">
+								<td key="aply-fltrtd" className="tdcenter">
+									{this.createApplyButton()}
+								</td>
+							</tr>
+						</thead>}
 						<tbody key='tbd-fltrFrm'>
 							{this.createSortBy()}
 							{this.createFilters()}

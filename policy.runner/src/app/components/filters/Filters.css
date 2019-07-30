@@ -49,6 +49,16 @@ datalist {
 	margin: 5px;
 }
 
+.fltrDiv table tbody {
+	display: block;
+	max-height: 70vh;
+	overflow: auto;
+  }
+
 .fltrTitle {
 	font-weight: bolder;
+}
+
+.tdcenter {
+	text-align: center;
 }

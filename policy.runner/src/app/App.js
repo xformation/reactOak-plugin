@@ -42,7 +42,7 @@ class App extends React.Component {
 					<h1>Policy Runner</h1>
 					<Tabs>
 						<div label="Filters">
-							<Filters json={Filters.INPUTJSON} resultCallback={this.resHandler}/>
+							<Filters json={Filters.INPUTJSON} resultCallback={this.resHandler} isApply="true"/>
 							<div dangerouslySetInnerHTML={{__html: this.state.result}}></div>
 						</div>
 						<div label="Student Form">
