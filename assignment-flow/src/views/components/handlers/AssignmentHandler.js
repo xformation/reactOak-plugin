@@ -2,9 +2,9 @@ import Utils from './../../../utils/Utils';
 import ActionHandler from './ActionHandler';
 import DynamicForm from './../../components/modals/DynamicForm';
 
-const DNL_URL = '/oakRepo/download';
-const UPL_URL = '/oakRepo/upload';
-const CRT_URL = '/oakRepo/createNode';
+const DNL_URL = '/api/oakRepo/download';
+const UPL_URL = '/api/oakRepo/upload';
+const CRT_URL = '/api/oakRepo/createNode';
 
 const downloadJSON = {
 	title: 'Dyanmic Form',
@@ -136,7 +136,7 @@ export default class AssignmentHandler extends ActionHandler {
 		if (this.state.ssmState) {
 			switch(this.state.ssmState.name) {
 				case 'Download':
-					this.downloadFile();
+					this.downloadFile(data.assignment);
 					break;
 				case 'Upload':
 					this.uploadFile(data.assignment, data.input);
@@ -177,9 +177,9 @@ export default class AssignmentHandler extends ActionHandler {
 			});
 	}
 
-	downloadFile() {
+	downloadFile(assignment) {
 		// call Jcr oak to download the assignment
-		const path = Utils.getFileNodePath(this.state.assignment.id);
+		const path = Utils.getFileNodePath(assignment.id);
 		const url = this.state.url + DNL_URL + "?path=" + path;
 		console.log("Url:" + url);
 		Utils.postReq(url, {}, {responseType: 'blob', headers: {Accept: 'application/*'}})
