@@ -5,7 +5,7 @@
         "node": ">=8.6"
     },
     "dependencies": {
-        "apollo-server-koa": "^2.4.8",
+        "apollo-server-koa": "^2.14.2",
         "axios": "^0.18.0",
         "concat-stream": "^2.0.0",
         "dotenv": "^6.2.0",
