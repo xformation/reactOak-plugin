@@ -10,7 +10,7 @@
 		"lodash": "^4.17.15",
 		"react": "^16.8.6",
 		"react-dom": "^16.8.6",
-		"react-scripts": "3.0.1",
+		"react-scripts": "5.0.1",
 		"react-table": "^6.10.0",
 		"survey-creator": "^1.0.89",
 		"survey-react": "^1.0.88",
